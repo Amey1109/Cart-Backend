@@ -17,24 +17,30 @@ serializer_context = {
 }
 
 
-
-
 @api_view(['GET'])
 def getCart(request, id):
     query_set = Cart.objects.filter(user=id)
-    # result = []
-    # for objects in query_set:
-    #     data = {
-    #         'id' = objects.id
-    #         'user' = objects.user
-    #         'products' = objects.products
-    #     }
+    result = []
+    for objects in query_set:
+        product_list = []
+        products = objects.products.all() #[1,2,3]
+        for product in products:
+            product_list.append(product.product_name)
 
-    serializer_object = CartSerializer(query_set, many=True,context=serializer_context)
-    if serializer_object:
-        return JsonResponse(serializer_object.data, safe=False)
-    else:
-        return Response({"status": False})
+        data = {
+            'id': objects.id,
+            'user': objects.user.pk,
+            'products': product_list
+        }
+
+        result.append(data)
+
+    # serializer_object = CartSerializer(
+    #     query_set, many=True, context=serializer_context)
+    # if serializer_object:
+    #     return JsonResponse(serializer_object.data, safe=False)
+    # else:
+    return JsonResponse(result, safe=False)
 
 
 @api_view(['POST'])
