@@ -23,33 +23,38 @@ def getCart(request, id):
     result = []
     for objects in query_set:
         product_list = []
-        products = objects.products.all() #[1,2,3]
+        products = objects.products.all()  # [1,2,3]
+        cart_price = 0
         for product in products:
-            product_list.append(product.product_name)
+            cart_price = cart_price + product.price
+            product_list.append(
+                {
+                    'id': product.id,
+                    'product_name': product.product_name,
+                    'product_price': product.price,
+                    'count': product.count
+                }
+            )
 
         data = {
             'id': objects.id,
             'user': objects.user.pk,
-            'products': product_list
+            'products': product_list,
+            'cart_price': cart_price
         }
 
         result.append(data)
 
-    # serializer_object = CartSerializer(
-    #     query_set, many=True, context=serializer_context)
-    # if serializer_object:
-    #     return JsonResponse(serializer_object.data, safe=False)
-    # else:
     return JsonResponse(result, safe=False)
 
 
 @api_view(['POST'])
-def addToCart(request, id):
-    products = [1, 2, 3, 4]
+def addToCart(request):
+
     product_list = list(request.data['products'])
     try:
-        cart_object = Cart.objects.get(user=id)
-        cart_object.products.add(*products)
+        cart_object = Cart.objects.get(user=request.data['id'])
+        cart_object.products.add(*product_list)
         cart_object.save()
 
         return Response({"msg": "Added to Cart"})
@@ -59,10 +64,10 @@ def addToCart(request, id):
 
 @api_view(['POST'])
 def removeFromCart(request, id):
-    products = [4]
+    product_list = list(request.data['products'])
     try:
         cart_object = Cart.objects.get(user=id)
-        cart_object.products.remove(*products)
+        cart_object.products.remove(*product_list)
         cart_object.save()
 
         return Response({"msg": "removed from Cart"})
