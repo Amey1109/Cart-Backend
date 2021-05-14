@@ -32,7 +32,7 @@ def getCart(request, id):
                     'id': product.id,
                     'product_name': product.product_name,
                     'product_price': product.price,
-                    'count': product.count
+                    'count': 1
                 }
             )
 
