@@ -23,3 +23,17 @@ class CartProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,default=1)
     product = models.ForeignKey(Produc, on_delete=models.CASCADE)
     cart = models.ForeignKey(Car, on_delete=models.CASCADE)
+
+
+
+class Order(models.Model):
+    PAYMENT_METHODS =(
+        ("ONLINE_PAY","Online Payment"),
+        ("COD_PAY","Cash Payment"),
+    )
+
+    order_placed_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_products = models.IntegerField()
+    order_total = models.IntegerField(default=100)
+    payment_mode = models.CharField(null=False,choices=PAYMENT_METHODS,max_length=30,default='Cash Payment')
+

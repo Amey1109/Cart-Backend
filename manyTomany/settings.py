@@ -72,7 +72,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'manyTomany.wsgi.application'
 
-
+CSRF_COOKIE_SECURE = False
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 

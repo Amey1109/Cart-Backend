@@ -7,8 +7,4 @@ urlpatterns = [
     path('add_cart/', add_to_cart),
     path('delete_cart/', remove_from_cart),
 
-
-
-
-
 ]

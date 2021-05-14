@@ -8,21 +8,30 @@ from rest_framework.response import Response
 from .models import CartProduct, Car, Produc
 from django.contrib.auth.models import User
 from .serializers import CartProductSerializers
+from django.views.decorators.csrf import csrf_exempt
 
 
 @api_view(['GET'])
 def get_cart_details(request):
     query_set = CartProduct.objects.filter(user=request.data['id'])
+    product_data = []
     result = []
+    price = 0
     for item in query_set:
-
-        result.append({
+        price = price + item.product.price
+        product_data.append({
             'product_name': item.product.name,
             'product_price': item.product.price,
+        })
+
+    result.append(
+        {
             'cart_owner_id': item.user.id,
             'cart_owner_name': item.cart.user_id.username,
-
-        })
+            'product': product_data,
+            'cart_price': price
+        }
+    )
 
     return JsonResponse(result, safe=False)
 
@@ -50,7 +59,8 @@ def add_to_cart(request):
         return Response({"msg": "Item added to the Cart "})
 
 
-api_view(['PUT'])
+@csrf_exempt
+@api_view(['POST'])
 def remove_from_cart(request):
     user_instance = User.objects.get(id=request.data['id'])
     cart_user = Car.objects.get(user_id=user_instance)
@@ -58,7 +68,9 @@ def remove_from_cart(request):
 
     cart = CartProduct.objects.filter(
         user=user_instance, product=product_instance, cart=cart_user)
-
     cart.delete()
-    cart.save()
-    return Response({"msg":"Item Deleted"})
+    return Response({"msg": "Item Deleted"})
+
+@api_view(['POST'])
+def place_order(request):
+    pass
