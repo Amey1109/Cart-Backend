@@ -1,3 +1,4 @@
+from django.db.models import query
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -73,4 +74,12 @@ def remove_from_cart(request):
 
 @api_view(['POST'])
 def place_order(request):
-    pass
+    query_set = CartProduct.objects.filter(user=request.data['id'])
+    result = []
+    order_total = 0 
+    
+    for item in query_set:
+        order_total = order_total +item.product.price
+        
+
+
